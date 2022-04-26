@@ -1,7 +1,7 @@
-FROM python:2.7-wheezy
+FROM python:3.8.13-bullseye
 
 # Install locust
-RUN pip install pyzmq locustio faker
+RUN pip3 install pyzmq locust==2.8.6 faker
 
 ADD locustfile.py /config/locustfile.py
 ADD runLocust.sh /usr/local/bin/runLocust.sh

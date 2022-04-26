@@ -10,6 +10,7 @@ INITIAL_DELAY=1
 TARGET_HOST="$HOST"
 CLIENTS=2
 REQUESTS=10
+TIME_LIMIT=10s
 
 
 do_check() {
@@ -46,7 +47,7 @@ do_exec() {
   fi
 
   echo "Will run $LOCUST_FILE against $TARGET_HOST. Spawning $CLIENTS clients and $REQUESTS total requests."
-  locust --host=http://$TARGET_HOST -f $LOCUST_FILE --clients=$CLIENTS --hatch-rate=5 --num-request=$REQUESTS --no-web --only-summary
+  locust --host=$TARGET_HOST -f $LOCUST_FILE --users=$CLIENTS --spawn-rate=$REQUESTS --run-time=$TIME_LIMIT --headless --only-summary
   echo "done"
 }
 
@@ -57,9 +58,10 @@ Usage:
 
 Options:
   -d  Delay before starting
-  -h  Target host url, e.g. http://localhost/
+  -h  Target host url, e.g. http://localhost
   -c  Number of clients (default 2)
-  -r  Number of requests (default 10)
+  -r  Spawn rate of clients per second (default 10)
+  -t  Total runtime (default 10s)
 
 Description:
   Runs a Locust load simulation against specified host.
@@ -70,7 +72,7 @@ EOF
 
 
 
-while getopts ":d:h:c:r:" o; do
+while getopts ":d:h:c:r:t:" o; do
   case "${o}" in
     d)
         INITIAL_DELAY=${OPTARG}
@@ -87,6 +89,10 @@ while getopts ":d:h:c:r:" o; do
     r)
         REQUESTS=${OPTARG:-10}
         #echo $REQUESTS
+        ;;
+    t)
+        TIME_LIMIT=${OPTARG:-10s}
+        #echo $TIME_LIMIT
         ;;
     *)
         do_usage
